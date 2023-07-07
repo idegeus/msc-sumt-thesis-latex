@@ -7,7 +7,7 @@
 
 % see also ### ACM template on overleaf 
 \usepackage[backend=biber, style=apa]{biblatex}
-\bibliography{references.bib}
+\bibliography{../references.bib}
 
 \usepackage{pdfpages} 
 \usepackage{booktabs}
@@ -34,48 +34,60 @@
 
 \settopmatter{printfolios=true} % Set page numbers
 
-\DeclareCiteCommand{\parencite}{}{}{}{}
-\DeclareCiteCommand{\textcite}{}{}{}{}
-\DeclareCiteCommand{\cite}{}{}{}{}
+% \DeclareCiteCommand{\parencite}{}{}{}{}
+% \DeclareCiteCommand{\textcite}{}{}{}{}
+% \DeclareCiteCommand{\cite}{}{}{}{}
 
 \begin{document}
 
-\title{Cycling Trip Generation in the Netherlands: a data-driven prediction}
+\title{
+    Cycling Trip Generation in the Netherlands \\ 
+    using Data-Driven Prediction}
 \author{Ivo Cornelis de Geus}
 \date{June 2023}
 \keywords{Infrastructure, Land Use, Spatial Planning, Cycling, Travel Mode, Travel Time, Machine Learning, Neural Networks}
 
 \begin{abstract}
-    Cycling and other forms of active transport are getting increasing international attention as a solution for increasing urbanisation and societal costs of urban automotive use, promising to reducing automotive use and its related socio-environmental impacts \parencite{un_68_2018}. However, the factors influencing choosing active transport are less well understood \parencite{stevens_does_2017, ewing_travel_2010, naess_meta-analyses_2022}. Literature shows that mobility choices depend on a multitude of factors, both local and regional, along with socio-economic and demographic factors. The aim of this study is to employ publicly available mobility diary logs from ODiN (Onderweg in Nederland), stacked over several years, to give accurate predictions of active mobility behaviour on a local scale. This project will analyse if it possible to make a generalisation over the Netherlands where mobility choices are related to urban variables, e.g., density and destination accessibility and more. First, general exploratory data analysis will be performed to analyse and separate target groups, after which several prediction method are calibrated. Methods suggested are a regression model, decision tree ensembles and artificial neural networks. We will then compare its explainable power and error rate against simple regressions and basic statistics. These methods will then be compared with established static regional models and presented in a visual online format.
+    Active transport, including cycling, has gained significant international attention as a means to deal with increasing urbanisation and societal costs of urban automotive use, promising to reducing automotive use and its related socio-environmental impacts \parencite{un_68_2018}. However, the factors influencing individuals' choices to use active transport are not yet fully understood, nor are they well-defined for estimation \parencite{stevens_does_2017, ewing_travel_2010, naess_meta-analyses_2022}. Literature shows that mobility choices depend on a multitude of factors, both local and regional, along with socio-economic and demographic factors. The aim of this study is to employ publicly available mobility diary logs from ODiN (Onderweg in Nederland), stacked over several years, to give accurate predictions of active mobility behaviour on a local scale. This project will analyse if it possible to make a generalisation over the Netherlands where mobility choices are related to urban variables, e.g., density and destination accessibility and more. First, a comprehensive exploratory data analysis will be performed to analyse and separate target groups, after which several prediction method are calibrated. Methods suggested are a regression model, decision tree ensembles and artificial neural networks. The results and error rates appropriate for these models will then be evaluated with the help of expert opinion, and conclusions will be drawn. Finally, a first version of an online environment will be developed, allowing for simple visualisation and simulation of value changes in specific spatial contexts. 
 \end{abstract}
 
 \maketitle
 
 \section{Personal Details}
 \begin{description}
-    \item[Student] \href{mailto:mail4ivo@gmail.com}{Ivo Cornelis de Geus}
+    \item[Student] \href{mailto:mail4ivo@gmail.com}{Ivo Cornelis de Geus (1890638)}
+    \item[Program] \href{https://www.eiturbanmobility.eu/academy/sustainable-urban-mobility-transitions/}{EIT Sustainable Urban Mobility Transitions (KTH/TU/e)}
     \item[1st External Supervisor] \href{mailto:marie-jette.wierbos@sweco.nl}{Dr. Marie-Jette Wierbos}
     \item[1st Internal Supervisor] \href{mailto:d.kasraian@tue.nl}{Dr. Ir. Dena Kasraian}
     \item[2nd Internal Supervisor] \href{mailto:p.j.h.j.v.d.waerden@tue.nl}{Dr. Ing. Peter van der Waerden}
     \item[Exam Committee Chairman] \href{mailto:s.rasouli@tue.nl}{Prof. Dr. Soora Rasouli}
-    \item[Github] \url{https://github.com/idegeus/msc-sumt-thesis}
+    \item[GitHub Repository] \url{https://github.com/idegeus/msc-sumt-thesis}
 \end{description}
 
+
+This research proposal is \textbf{version 0.3}, updated \textbf{2023-07-07}. Check for more recent versions on \url{https://github.com/idegeus/msc-sumt-thesis}.
+
 \section{Introduction}  
-    In both the Netherlands and in international contexts, active mode choices, such as bicycling and walking, as a mode of transport is receiving increasing attention as a sustainable alternative to private automotive use, and as a complementary mode to public transport \parencite{naess_what_2012, pucher_making_2008, romanillos_cyclists_2020, dekoster_cycling_1999}. However, understanding in which urban contexts bicycling could be a viable alternative is still an active topic of research. This is reinforced by the fact that investment in high-quality infrastructure for cyclists is an important requirement for increasing its modal share \parencite{goodwin_why_2012, pucher_making_2008, buehler_bikeway_2016}. This issue is further complicated as active mode choice is influenced by spatial, infrastructural, socio-economic, cultural, habitual, as well as demographic influences \parencite{naess_built_2015, felix_maturing_2019, oldenziel_contested_2011, ton_unravelling_2019}. 
+    In both domestic and global contexts, active mode choices, such as bicycling and walking, as a mode of transport is receiving increasing recognition as a sustainable alternative to private car use, and as a complementary option to public transport use \parencite{naess_what_2012, pucher_making_2008, romanillos_cyclists_2020, dekoster_cycling_1999}. Nevertheless, there is still an active topic of research to understand the urban contexts in which bicycling could serve as a viable alternative to car use. This is reinforced by the fact that investment in high-quality infrastructure for cyclists is an important requirement for increasing its modal share \parencite{goodwin_why_2012, pucher_making_2008, buehler_bikeway_2016}. This issue is further complicated as active mode choice is influenced by spatial, infrastructural, socio-economic, cultural, habitual, as well as demographic influences \parencite{naess_built_2015, felix_maturing_2019, oldenziel_contested_2011, ton_unravelling_2019, snellen_urban_2001}. 
     
     Most research employs travel diaries to record trips, calculating significant predictive factors in regressions, expressing the explanatory power of different features using elasticities, like in the meta-analysis (e.g. see \cite{ewing_travel_2010}) or in meta-regressions (e.g. see \cite{stevens_does_2017}). Several meta-analysis employ similar techniques, building further on similar data \parencite{naess_meta-analyses_2022}. 
     
-    One common downside of using linear expressions, such as elasticities and other parametric approaches such as logit models, is that these methods might not be able to grasp non-linearity and segmentation in mobility choices \cite{lee_comparison_2018}. Other statistical and machine-learning methods, and especially more basic decision trees, have high explainability as their choices are mappable in n-dimensional space. However, while cycling and other active modes are included in some of these works, their accuracy and segmentation seems to be lacking. 
+    One common downside of using parametric modeling expressions, such as elasticities and logit models, is that these methods might not be able to grasp non-linearity and segmentation in mobility choices \cite{lee_comparison_2018}. In this contrast, non-parametric methods have proven to be incredibly powerful to study urban systems \parencite{lee_comparison_2018}. They are complemented by other statistical and machine-learning methods such basic decision trees, which have high explainability as their choices are dividable in n-dimensional space. However, while cycling and other active modes are included in some of these works, their accuracy and segmentation seems to be lacking. 
 
-    \subsection{Purpose}
-    The purpose of this paper is to develop a new data-driven model based on publicly accessible travel diary data in the Netherlands, taking papers such as \cite{ding_applying_2018} and \cite{bakri_inzichten_2023} as inspiration. This includes giving an overview of literature regarding active mode selection, their expected elasticities and feature importance. In the context of this papers project, the results of this model are then mapped on a national map, where expected aggregate mode count and modal split (in percentages) are shown. On this map, input values will also be changable in order to simulate a new situation. 
+    \subsection{Project purpose \& desired outcome}
+    The purpose of this paper is to develop a new data-driven model based on publicly accessible travel diary data in the Netherlands, taking papers such as \cite{ding_applying_2018} and \cite{bakri_inzichten_2023} as inspiration. This includes giving an overview of literature regarding active mode selection, their expected elasticities and feature importance. In the context of this papers project, the results of this model are then mapped on a national map, where expected aggregate mode count and modal split (in percentages) are shown. On this map, input values will also be changable in order to simulate a new situation, like shown in the prototype in \autoref{fig:prototype}.
     
     \subsection{Proposal Structure}
     We will first dive into literature background on land-use and active mobility indexes, its influence on mobility decisions, and sources and applications of our database in \autoref{section:background}. We will then define a research question, for which subdivided research questions will be elaborated
     in \autoref{section:rq}. Per sub-question, a methodology will be proposed in
     \autoref{section:methodology}. Finally, a planning of the project and possible risks will
     be explained in respectively \autoref{section:planning} and \autoref{section:risks}.
+
+    \begin{figure}
+        \includegraphics[width=\linewidth]{figures/prototype.png}
+        \caption{Prototype dashboard with adjustable parameters.}
+        \label{fig:prototype}
+    \end{figure}
 
 \section{Background}\label{section:background}
     % Introducing urban pressures, sustainable travel and broad prosperity
@@ -92,7 +104,7 @@
     
     A large part of research employs travel diaries to record trips, calculating significant predictive factors in regressions, expressing the explanatory power of different features using elasticities \parencite{aditjandra_influence_2013, handy_correlation_2005}. 
     
-    There are several ways to express both land-use variables and mobility factors. One common school of in automotive-focused analysis are so-called D-variables defined by \cite{cervero_travel_1997}: population density, land use diversity, street design, destination accessibility and transit stop distance. These are then paired with an output variable, commonly Vehicle Miles Traveled. There are many other variations on these variables and the ways of generating features from land-use data. A limited list of some more examples are neighborhood layout \parencite{hamidi_longitudinal_2014, nello-deakin_assessing_2019, nam_compact_2012, stevens_does_2017}, population density \parencite{gim_meta-analysis_2012, song_comparing_2013}, social activity \parencite{naess_accessibility_2006, bergefurt_loneliness_2019}, and urban greenery \parencite{yang_walk_2021, ewing_streetscape_2016}.
+    There are several ways to express both land-use variables and mobility factors. One common school of in automotive-focused analysis are so-called D-variables defined by \textcite{cervero_travel_1997}: population density, land use diversity, street design, destination accessibility and transit stop distance. These are then paired with an output variable, commonly Vehicle Miles Traveled. There are many other variations on these variables and the ways of generating features from land-use data. A limited list of some more examples are neighborhood layout \parencite{hamidi_longitudinal_2014, nello-deakin_assessing_2019, nam_compact_2012, stevens_does_2017}, population density \parencite{gim_meta-analysis_2012, song_comparing_2013}, social activity \parencite{naess_accessibility_2006, bergefurt_loneliness_2019}, and urban greenery \parencite{yang_walk_2021, ewing_streetscape_2016}.
     
     % Bergefurt2019 loneliness -> Not strong relationship
     
@@ -107,10 +119,6 @@
     % ODiN explication
     In the Netherlands, mobility diary surveys have been conducted nationally from 1978 in several different forms. From 2018 forward, the latest version of the research method has been used, which is called the Onderweg in Nederland (Travelling in the Netherlands, onwards called ODiN) dataset \parencite{cbs_onderweg_2022}. This dataset contains the total amount of trips, ordered in trips, movements and movement-chains, made by respondents on one specified day in the Netherlands. This dataset is in wide use in both governmental, academic and commercial applications, see \cite{boonstra_modelling_2022, bakri_inzichten_2023}. 
     
-    % * Constant Travel Time Concept
-    % * Frank2008
-    % * Nam2012 
-    
     % Mobility as explanatory variable
     In addition to land use features, using mobility options and their respective utilities such as distance and travel time to explain mobility choices are a more fundamental approach, often incorporated in static parametric models, (e.g., variants of multi-nominal and nested logit models, see \parencite{koppelman_self_2006} and \parencite{ortuzar_modelling_2011}). In this project, we will not work with these models, as these are limited to linear estimations. We will keep the option open to compare results with such models, but it will not be explicitly included. 
 
@@ -118,13 +126,14 @@
     The main parametric modelling approach in transport domains has been using random utility models since the 1980s. This technique, and in particular logit models, can be used to investigate and quantify relationships between mode choice and determinants \cite{lee_comparison_2018}. One common downside of using linear expressions, such as elasticities and other parametric approaches such as the previously mentioned logit models, is that these methods might not be able to grasp non-linearity and segmentation in mobility choices. Initial works have been made to address this by using alternative methods, such as decision trees and gradient boosting \parencite{ding_applying_2018}, feed-forward neural networks (FFNNs, \cite{bakri_inzichten_2023}), and a set of artificial neural networks (ANNs) \parencite{lee_comparison_2018}. These models are more fit to learn degrees of freedom and data representation from the original dataset, without being limited to a pre-defined parametric model \parencite{bakri_inzichten_2023}. From these methods, basic decision trees have high explainability as their choices are mappable in n-dimensional space. Other modes might lose explainability through interpretation and calibration, and might be more difficult to explain, or might even contradict expert knowledge, and do therefore require expert insights to justify using the results. While cycling and other active modes are included in some of these earlier works as a modality selection, their accuracy and user-group segmentation seems to be lacking. 
 
 \section{Research Questions}
+    The main research question is shown here, and subdivided in four main subquestions, which will be answered in similar fashion in the final manuscript. 
     \label{section:rq}
-    \begin{enumerate}[label=RQ\arabic*]
+    \begin{enumerate}[label=RQ]
         \item Can local active mobility generation be estimated from existing mobility diary data using machine learning?
     \end{enumerate}
     \begin{enumerate}[label=SQ\arabic*]
         \item How viable is estimating estimated generation values compared to relative modal split? 
-        \item How should mobility diary data be filtered and transformed to be useful?
+        \item How should mobility diary data be filtered, transformed and enriched to be useful?
         \item What prediction methods work most reliable to predict active mode choices?
         \item How generalisable are mobility choices across the population?
     \end{enumerate}
@@ -138,10 +147,22 @@
     \subsection{SQ1: Absolute vs Relative choices}
     Estimating absolute cycling numbers from urban and social characteristics both simplifies and complicates issues. It simplifies in the way that we can disregard longer trips and section off trips that could logically be made by other modes. It does, however, complicates by assuming active mode selection is influenced by other modes to a severely limited amount. We will compensate for this limitation by including viability of other modes, as done by reading the input trips made and calculating the possible alternatives for the trip using open mapping and transit data. 
 
-    In addition to generating routes that fit the mobility diary trip, we will make isochrones that with origin in the individual points and converting those into an accessibility competitiveness metric. This metric could be a fraction of area in square kilometers accessible by car divided by the alternative mode, such as bicycle or transit accessible areas. We will use public code previously developed for \textcite{de_geus_database_2023}. We suspect that by implementing the isochrones and calculation population reach within the area, this might help contribute to accurate bicycle trip generation prediction.  
+    In addition to generating routes that fit the mobility diary trip, we will make isochrones that with origin in the individual points and converting those into an accessibility competitiveness metric. This metric could be a fraction of area in square kilometers accessible by car divided by the alternative mode, such as bicycle or transit accessible areas. We will use public code previously developed for \textcite{de_geus_preparation_2023}. We suspect that by implementing the isochrones and calculation population reach within the area, this might help contribute to accurate bicycle trip generation prediction.  
     
-    \subsection{SQ2: Filtering \& Transforming}
-    In this project, we will pre-process data in a similar way as done by \textcite{bakri_inzichten_2023} and \textcite{zoutenbier_drukte_2021}. According to their conclusions, weather is not immediately necessary to predict, and parking costs are an explanatory variable. We will include it either way to control for possible dependent variables. Part of the data transformation and filtration is shown in \autoref{section:planning}
+    \subsection{SQ2: Filtering, Transforming \& Enriching}
+    In this project, we will pre-process data in a similar way as done by \textcite{bakri_inzichten_2023} and \textcite{zoutenbier_drukte_2021}. According to their conclusions, weather is not immediately necessary to predict, and parking costs are an explanatory variable. We will include it either way to control for possible dependent variables. Part of the data transformation and filtration is shown in \autoref{section:planning}. 
+
+    Regarding the enrichment of data, we will enrich data in similar ways as done by \textcite{bakri_inzichten_2023}, by including the resources and methods below for each trip. Each header is clickable for a direct link to the source of the data. 
+
+    \begin{description}
+        \item[\href{https://opendata.cbs.nl/statline/}{CBS Demographics}] From the national institute of statistics: population education, age, driving licence and ethnicity information, on which models will be calibrated in ODiN data. 
+        \item[\href{https://www.nationaalparkeerregister.nl/open-parkeerdata}{NPR}] Open parking data, giving average parking costs for parts of the country in geospatial format, allowing to incorporate regional differences. 
+        \item[\href{https://www.knmi.nl/nederland-nu/klimatologie/daggegevens}{KNMI Weather}] National weather institute, giving option to control for weather influences on biking.
+        \item[\href{https://download.geofabrik.de/}{Geofabrik OSM Data}] OpenStreetMap data pre-compiled info pbf format, readable for route and isochrone generation. 
+        \item[\href{https://www.graphhopper.com/}{GraphHopper}] Open-Source route engine, previous two sources of map and transit data, generating route alternatives and isochrone reaches given 30 minutes of travel time \parencite{marchetti_anthropological_1994}.
+        \item[\href{https://www.transit.land/map}{TransitLand}] International source of public transport data. In this project, we will only use the feed offered by \href{http://ovapi.nl/}{ovapi}, \href{https://www.transit.land/map}{gtfs-nl.gtfs}.
+        \item[\href{https://ghsl.jrc.ec.europa.eu/ghs_pop.php}{GHS-POP}] High-resolution raster with population density with global coverage.
+    \end{description}
     
     \subsection{SQ3: Prediction Methods}\label{SQ3:predictionmethods}
     There is some precedent for using machine learning methods for determining travel mode choice and, in general, amount of traffic generated from some point. In this project, the initial idea is to start out with a multiple linear regression as a baseline for evaluating estimation power, fitting this using ordinary least squares. Subsequent models would start with a decision tree and an ensemble of decision trees, like gradient boosting. A simple feed-forward neural network calibrated using back-propagation would be the third model, which will be fitted using gradient decent on an error function, such as used in \cite{lee_comparison_2018}. We can evaluate the performance of these methods using generic AI metrics like accuracy, precision, recall and f1-score.
@@ -152,7 +173,7 @@
 \section{Risk assessment}
     \label{section:risks}
     %	* Is it complete? Is is realistic? Is the backup plan executable?
-    The project is quite ambitious, as it aims to 1) collect different sources of data of which data quantity and generalizability could prove to low, 2) tries to develop a framework that tries to achieve similar accuracy rates as common parametric modeling approaches without their integrated applying and enforcing expert domain knowledge, 3) summarize these findings in a method that allows for easy user simulation and mutation. These are quite ambitious steps, but these steps are perfectly aligned with my knowledge and interests. 
+    The project is quite ambitious, as it aims to 1) collect different sources of data of which data quantity and generalizability could prove to low, 2) tries to develop a framework that tries to achieve similar accuracy rates as common parametric modeling approaches without their integrated applying and enforcing expert domain knowledge, 3) summarize these findings in a method that allows for easy user simulation and mutation. These are ambitious steps, are perfectly aligned with my knowledge and interests. 
     
     Especially the third step, I like making this kind of software available to users as needed. The third step is based on the assumption that the previous two steps are executed to reasonable accuracy, and can be used to support further policy decisions: ultimately the goal of transport modeling. Another condition is that this public interface might be of competitive advantage for Sweco as a business, and might be limited as a demo or purely for academic usage outside of this project. 
 	
@@ -162,20 +183,20 @@
     
     \begin{enumerate}
         \item Start working at Sweco on different topics, sniffing around and reading literature.
-        \item Get used to working with ODiN datasets, drawing initial conclusions.
+        \item Start working with ODiN, drawing initial conclusions.
         \item Prepare GraphHopper instances for data generation, with options for walking, cycling, transit (both with walking and bicycling as access and egress methods) and car driving. 
         \item Datasets of ODiN 2018, 2019 and 2022 are stacked, skipping two years with pandemic-influenced data. 
         \item Rows with missing or erroneous data are removed. Rows within the same zone are removed.
         \item Convert origin/destination postcode-4 (PC4)-data to population-weighted centroid coordinates.
-        \item Append transport alternatives for trip using national GraphHopper instance, combining GTFS data and OpenStreetMap data.
+        \item Append transport alternatives for trip using national GraphHopper instance, combining GTFS data and OpenStreetMap.
         \item Append transport alternative population reach from isochrones from point of origin.
-        \item Append historical rain and wind factors from KNMI (National Weather Institute) API to trip.
-        \item Append parking average parking costs from NPR Parking Data per PC4-area to trip.
-        \item Calibrate statistical statistical models (as proposed in \ref{SQ3:predictionmethods}) on dataset.
+        \item Append historical rain and wind factors from KNMI (National Weather Institute) API.
+        \item Append parking costs from NPR Parking Data per PC4-area.
+        \item Calibrate statistical statistical models (as proposed in \ref{SQ3:predictionmethods}).
         \item Calculate metrics for evaluating different methods, evaluating correctness and external validation of output data, consoling with domain experts. 
         \item Optional: compare output of bicycle generation with bicycle counting points realised on-street. 
         \item Dedicate time to writing out academic thesis and company report, providing continuation steps. 
-        \item Build dashboard for presentation and simulation of different variables, calculating possible outcomes.
+        \item Build dashboard for presentation and simulation of different variables, calculating possible outcomes. This can be done either in PowerBI, Tableau, a custom react-app with python back-end which allows for the simulation to be run, or a combination. 
         \item Create and present final presentation and thesis defense. 
         \item Finalise thesis writing.
     \end{enumerate}
@@ -191,7 +212,7 @@
             Week 4  & 12/6 & Literature research \& work on route planner software. \\
             Week 5  & 19/6 & Writing research proposal. \\
             Week 6  & 26/6 & Writing research proposal. \\
-            Week 7  & 03/7 & Version 1 of research proposal shared with supervisors. \\
+            \textbf{Week 7}  & 03/7 & Version 1 of research proposal shared with supervisors. \\
             Week 8  & 10/7 & \textit{Personal vacation}. \\
             Week 9  & 17/7 & Revision v2 of research proposal. \\
             Week 10 & 24/7 & Depending on approval, green-light meeting. \\
@@ -220,13 +241,10 @@
 
         Prof. Dr. Soora Rasouli will be Chairman of the graduation commitee, and will as program coordinator of the Sustainable Urban Mobility Transitions provide oversight on relevance with the master-programme.        
 
-\section{Personal introduction}\label{section:introduction}
-    \label{appendix:author_IG}
-    \begin{figure}[h]
-        \includegraphics[width=0.4\linewidth]{figures/low-quality.jpg}
-    \end{figure}
+\section{Personal introduction}\label{section:author_IG}
     My name is Ivo Cornelis de Geus (1997), Dutch native and currently full-time Sustainable Urban Mobility Transitions master-student at the EIT Urban Mobility consortium together with the Royal Technical University of Stockholm (KTH) and the Technical University of Eindhoven (TU/e). I completed my Bachelor and Masters in Information Studies and Data Science at the UvA previously with a wide range of extracurricular transport-oriented courses, a minor in Transport, Logistics and Infrastructure at the TU/Delft and an Erasmus-exchange to UAB Barcelona. My interests are primarily in the link between urban data science and spatial planning, where accessibility and active mode adoption can make cities more attractive, and public transport more effective.  
     
+\newpage
 \section{References}
 \printbibliography[heading=none]
 \end{document}
